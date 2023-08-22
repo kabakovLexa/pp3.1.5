@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.service.UserService;
+import ru.kata.spring.boot_security.demo.services.UserService;
 
 import java.util.List;
 
@@ -21,17 +21,17 @@ public class AdminRestController {
 
     @GetMapping()
     public ResponseEntity<List<User>> showAllUsers() {
-        return new ResponseEntity<>(userService.allUsers(), HttpStatus.OK);
+        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return new ResponseEntity<>(userService.getUserId(id), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
     }
 
     @PostMapping()
     public ResponseEntity<HttpStatus> addNewUser(@RequestBody User user) {
-        userService.addUser(user);
+        userService.saveUser(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
