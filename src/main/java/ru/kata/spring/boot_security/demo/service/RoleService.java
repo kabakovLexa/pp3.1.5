@@ -10,6 +10,7 @@ import java.util.Set;
 public interface RoleService {
     public List<Role> allRoles();
     Set<Role> getRolesByIdIn(Set<Long> id);
+    public void save(Role role);
 
 
 }

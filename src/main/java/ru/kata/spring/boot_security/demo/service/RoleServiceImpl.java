@@ -29,4 +29,9 @@ public class RoleServiceImpl implements RoleService {
     public Set<Role> getRolesByIdIn(Set<Long> id) {
         return roleRepository.getRolesByIdIn(id);
     }
+
+    @Override
+    public void save(Role role) {
+        roleRepository.save(role);
+    }
 }

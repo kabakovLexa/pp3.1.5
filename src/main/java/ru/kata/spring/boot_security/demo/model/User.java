@@ -1,63 +1,81 @@
 package ru.kata.spring.boot_security.demo.model;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table
+@Table(name = "users")
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-    @Column(name = "name")
-    private String name;
-    @Column(name = "surname")
-    private String surname;
-    @Column(name = "salary")
-    private Double salary;
-
-    @Column(name = "username")
-    private String username;
+    @Column(name = "user_id")
+    private long id;
+    @Column(name = "userName", unique = true)
+    private String userName;
+    @Column(name = "age")
+    private int age;
     @Column(name = "password")
     private String password;
+
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "user_roles",
+    @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "roles_id")
-    )
-    private Set<Role> roles;
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> role;
 
-    public User() {
+    public User(){
+
     }
 
-    public User(String name, String surname, Double salary, String username, String password, Set<Role> roles) {
-        this.name = name;
-        this.surname = surname;
-        this.salary = salary;
-        this.username = username;
+    public User(String userName, int age, String password, Set<Role> role) {
+        this.userName = userName;
+        this.age = age;
         this.password = password;
-        this.roles = roles;
-    }
-    public void addRole(Role role) {
-        this.roles.add(role);
-        role.getUsers().add(this);
+        this.role = role;
     }
 
-    public void removeRole(Role role) {
-        this.roles.remove(role);
-        role.getUsers().remove(this);
+    public User(long id, String userName, int age, String password, Set<Role> role) {
+        this.id = id;
+        this.userName = userName;
+        this.age = age;
+        this.password = password;
+        this.role = role;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
+        return role;
     }
 
     @Override
@@ -67,7 +85,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return userName;
     }
 
     @Override
@@ -90,82 +108,26 @@ public class User implements UserDetails {
         return true;
     }
 
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public Double getSalary() {
-        return salary;
-    }
-
-    public void setSalary(Double salary) {
-        this.salary = salary;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
+    public Set<Role> getRole() {
+        return role;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public void setRole(Set<Role> role) {
+        this.role = role;
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", salary=" + salary +
-                ", username='" + username + '\'' +
+                ", userName='" + userName + '\'' +
+                ", age=" + age +
                 ", password='" + password + '\'' +
-                ", roles=" + roles +
+                ", role=" + role +
                 '}';
     }
-    public boolean hasRole(String roleName) {
-        return roles.stream().anyMatch(role -> role.getName().equals(roleName));
-    }
 }
-
